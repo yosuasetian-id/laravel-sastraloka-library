@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,9 +30,14 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
+        $token = $user->createToken($user->username)->plainTextToken;
+
+        $user->sendEmailVerificationNotification();
+
         return response()->json([
-            'message' => 'Akun berhasil dibuat.',
-            'user' => $user
+            'message' => 'Akun berhasil dibuat. Silahkan cek email untuk vertifikasi akun.',
+            'user' => $user,
+            'access_token' => $token
         ], 201);
     }
 
@@ -73,4 +79,40 @@ class AuthController extends Controller
             'message' => 'Berhasil keluar.'
         ], 200);
     }
+
+    public function verify(Request $request, $id, $hash)
+    {
+        if (! $request->hasValidSignature()) {
+            abort(403, 'Email tidak valid atau sudah kedaluwarsa.');
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! hash_equals(sha1($user->email), $hash)) {
+            abort(403, 'Hash tidak valid.');
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        return response()->json([
+            'message' => 'Email berhsil divertifikasi.'
+        ]);
+    }
+
+    // public function resend(Request $request)
+    // {
+    //     if ($request->user()->hasVerifiedEmail()) {
+    //         return response()->json([
+    //             'message' => 'Akun Anda sudah tervertifikasi.'
+    //         ], 400);
+    //     }
+
+    //     $request->user()->sendEmailVerificationNotification();
+
+    //     return response()->json([
+    //         'message' => 'Link dikirim.'
+    //     ]);
+    // }
 }
