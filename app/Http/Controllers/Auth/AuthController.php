@@ -101,18 +101,18 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function resend(Request $request)
-    // {
-    //     if ($request->user()->hasVerifiedEmail()) {
-    //         return response()->json([
-    //             'message' => 'Akun Anda sudah tervertifikasi.'
-    //         ], 400);
-    //     }
+    public function resend(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Akun Anda sudah tervertifikasi.'
+            ], 400);
+        }
 
-    //     $request->user()->sendEmailVerificationNotification();
+        $request->user()->sendEmailVerificationNotification();
 
-    //     return response()->json([
-    //         'message' => 'Link dikirim.'
-    //     ]);
-    // }
+        return response()->json([
+            'message' => 'Link dikirim.'
+        ]);
+    }
 }
