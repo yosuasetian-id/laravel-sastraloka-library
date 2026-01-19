@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -32,5 +33,35 @@ class AuthController extends Controller
             'message' => 'Akun berhasil dibuat.',
             'user' => $user
         ], 201);
+    }
+
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'username' => 'required|exists:users,username',
+            'password' => 'required'
+        ], [
+            'username.required' => 'Username harus diisi.',
+            'username.exists' => 'Username tidak terdaftar.',
+            'password.required' => 'Password harus diisi.'
+        ]);
+
+        $user = User::where('username', $fields['username'])->first();
+
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Silahkan masukan data yang benar.'
+            ], 401);
+        }
+
+        $user->tokens()->delete();
+
+        $token = $user->createToken($user->username)->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login berhasil.',
+            'access_token' => $token,
+            'user' => $user
+        ], 200);
     }
 }
