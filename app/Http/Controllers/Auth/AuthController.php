@@ -30,6 +30,8 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
+        $user->profile()->create();
+
         $token = $user->createToken($user->username)->plainTextToken;
 
         $user->sendEmailVerificationNotification();
