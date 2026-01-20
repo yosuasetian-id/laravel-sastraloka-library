@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
-use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 
 class ProfileController extends Controller
@@ -28,14 +27,6 @@ class ProfileController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateProfileRequest $request, Profile $profile)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Profile $profile)
     {
         //
     }
