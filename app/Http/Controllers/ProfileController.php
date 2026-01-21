@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Http\Requests\UpdateProfileRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
 
-class ProfileController extends Controller
+class ProfileController extends Controller implements HasMiddleware
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:sanctum');
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum', except: ['index', 'show'])
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
