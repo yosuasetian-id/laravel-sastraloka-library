@@ -8,43 +8,37 @@ use Illuminate\Support\Facades\Gate;
 
 class ProfileController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:sanctum');
+    // }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Profile::with('user')->get();
+        return Profile::all();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Profile $profile)
     {
-        return Profile::findOrFail($id);
+        return $profile;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, $id)
+    public function update(UpdateProfileRequest $request, Profile $profile)
     {
-        $profile = Profile::findOrFail($id);
-
-        if (! Gate::allows('update-profile', $profile)) {
-            abort(403, 'Unauthorized');
-        }
-
         $fields = $request->validated();
 
         $profile->update($fields);
 
         return response()->json([
-            'message' => 'Profile updated',
+            'message' => 'Profile berhasil diperbarui.',
             'data' => $profile
         ]);
     }
