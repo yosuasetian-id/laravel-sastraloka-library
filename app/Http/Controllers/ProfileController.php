@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Http\Requests\UpdateProfileRequest;
+use Illuminate\Support\Facades\Gate;
 
 class ProfileController extends Controller
 {
@@ -22,16 +23,29 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Profile $profile)
+    public function show($id)
     {
-        //
+        return Profile::findOrFail($id);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, Profile $profile)
+    public function update(UpdateProfileRequest $request, $id)
     {
-        //
+        $profile = Profile::findOrFail($id);
+
+        if (! Gate::allows('update-profile', $profile)) {
+            abort(403, 'Unauthorized');
+        }
+
+        $fields = $request->validated();
+
+        $profile->update($fields);
+
+        return response()->json([
+            'message' => 'Profile updated',
+            'data' => $profile
+        ]);
     }
 }
