@@ -37,6 +37,8 @@ class ProfileController extends Controller implements HasMiddleware
      */
     public function update(UpdateProfileRequest $request, Profile $profile)
     {
+        Gate::authorize('update', $profile);
+
         $fields = $request->validated();
 
         $profile->update($fields);
