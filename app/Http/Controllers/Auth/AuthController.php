@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -126,6 +127,29 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Vertifikasi hapus akun dikirim ke email Anda.'
+        ]);
+    }
+
+    public function confirmDeleteAccount(Request $request, $id, $hash)
+    {
+        if (! $request->hasValidSignature()) {
+            abort(403, 'Link tidak valid atau sudah kedaluwarsa.');
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! hash_equals(sha1($user->email), $hash)) {
+            abort(403, 'Hash tidak valid.');
+        }
+
+        DB::transaction(function () use ($user) {
+            $user->tokens()->delete();
+            $user->profile()?->delete();
+            $user->delete();
+        });
+
+        return response()->json([
+            'message' => 'Akun berhasil dihapus.'
         ]);
     }
 }
