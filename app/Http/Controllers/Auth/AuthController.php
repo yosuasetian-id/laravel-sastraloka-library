@@ -117,4 +117,15 @@ class AuthController extends Controller
             'message' => 'Link dikirim.'
         ]);
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+
+        $user->sendDeleteAccountNotification();
+
+        return response()->json([
+            'message' => 'Vertifikasi hapus akun dikirim ke email Anda.'
+        ]);
+    }
 }
