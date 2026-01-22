@@ -101,7 +101,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Email berhsil divertifikasi.'
-        ]);
+        ], 200);
     }
 
     public function resend(Request $request)
@@ -116,7 +116,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Link dikirim.'
-        ]);
+        ], 200);
     }
 
     public function deleteAccount(Request $request)
@@ -127,7 +127,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Vertifikasi hapus akun dikirim ke email Anda.'
-        ]);
+        ], 200);
     }
 
     public function confirmDeleteAccount(Request $request, $id, $hash)
@@ -150,6 +150,6 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Akun berhasil dihapus.'
-        ]);
+        ], 200);
     }
 }
